@@ -1,32 +1,29 @@
 #include <Wire.h>
-const int ledPin = 13;
-const int btnPin = 10;
-int buttonState = 0;
-
-void setup() {
-  // put your setup code here, to run once:
-  Wire.begin(0x8);
-  Wire.onReceive(receiveEvent);
-  pinMode(ledPin, OUTPUT);
-  pinMode(btnPin, INPUT);
-  digitalWrite(ledPin, LOW);
+#define I2CAddressESPWifi 8
+char response[11] ="0123456789";
+void setup()
+{
+  Serial.begin(115200);
+  Wire.begin(I2CAddressESPWifi);
+  Wire.onReceive(espWifiReceiveEvent);
+  Wire.onRequest(espWifiRequestEvent);
 }
-void receiveEvent(int howMany){
-  while(Wire.available()){
+void loop()
+{
+  delay(1);
+}
+void espWifiReceiveEvent(int count)
+{
+  Serial.print("Received[");
+  while (Wire.available())
+  {
     char c = Wire.read();
-    digitalWrite(ledPin, c);
+    Serial.print(c);
   }
+  Serial.println("]");
+  //calc response.
 }
-void loop() {
-  // put your main code here, to run repeatedly:
-  delay(1000);
-  buttonState = !buttonState;// digitalRead(btnPin);
-  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (buttonState == HIGH) {
-    // turn LED on:
-    digitalWrite(ledPin, HIGH);
-  } else {
-    // turn LED off:
-    digitalWrite(ledPin, LOW);
-  }
+void espWifiRequestEvent()
+{
+  Wire.write(response);
 }
