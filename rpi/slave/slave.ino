@@ -12,24 +12,30 @@
 
 // LED on pin 13
 const int ledPin = 13; 
-
+byte x = 0;
 void setup() {
+  Serial.begin(9600);
   // Join I2C bus as slave with address 8
   Wire.begin(0x8);
   
   // Call receiveEvent when data received                
   Wire.onReceive(receiveEvent);
-  
+  Wire.onRequest(requestEvent);
   // Setup pin 13 as output and turn LED off
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
 }
-
+void requestEvent() {
+  //Wire.write("S->M=");
+  Serial.print("Sending x=");
+  Serial.println(x);
+  Wire.write(x);
+}
 // Function that executes whenever data is received from master
 void receiveEvent(int howMany) {
   while (Wire.available()) { // loop through all but the last
-    char c = Wire.read(); // receive byte as a character
-    digitalWrite(ledPin, c);
+    x = Wire.read(); // receive byte as a character
+    digitalWrite(ledPin, x);
   }
 }
 void loop() {
