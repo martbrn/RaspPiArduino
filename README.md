@@ -1,3 +1,3 @@
 # pdivibra
 
-Repositorio de Mesa Vibradora para Granos
+Repositorio Comunicacion entre placas entre otras cosas interesantes
