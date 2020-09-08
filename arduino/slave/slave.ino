@@ -1,44 +1,86 @@
-// Wire Slave Receiver
-// by Nicholas Zambetti <http://www.zambetti.com>
-
-// Demonstrates use of the Wire library
-// Receives data as an I2C/TWI slave device
-// Refer to the "Wire Master Writer" example for use with this
-
-// Created 29 March 2006
-
-// This example code is in the public domain.
-
-
 #include <Wire.h>
-byte x = 0;
+const unsigned char CM_CFG = 0x10;
+const unsigned char CM_RDI = 0x20;
+const unsigned char CM_WDO = 0x21;
+const unsigned char CM_RAI = 0x22;
+const unsigned char CM_WAO = 0x23;
+
+const byte DIR_I2C = 0x8;//Direccion I2C
+byte CM = 0x0;//Código de Mensaje
+byte analogInput[32];
+
 void setup() {
-  Wire.begin(8);                // join i2c bus with address #8
-  Wire.onReceive(receiveEvent); // register event
+  Wire.begin(DIR_I2C);       
+  Wire.onReceive(receiveEvent); 
   Wire.onRequest(requestEvent);
-  Serial.begin(9600);           // start serial for output
-  x = 0;
+  
+  Serial.begin(9600);
+  serialPrintf("Procesando: 0x%x", CM_WAO);             
 }
 
 void loop() {
   delay(100);
 }
-// function that executes whenever data is requested by master
-// this function is registered as an event, see setup()
-void requestEvent() {
-  Serial.print("Enviando: ");
-  Serial.println(x);
-  Wire.write("S->M=");
-  Wire.write(x);
+
+//###Funciones primitivas
+void serialPrintf(char* formato, char valor) {
+     char texto[128];
+     sprintf(texto, formato, valor);
+     Serial.println(texto);
+}
+uint8_t getPinMode(uint8_t pin){  
+  uint8_t bit = digitalPinToBitMask(pin);    
+  uint8_t port = digitalPinToPort(pin);  
+  volatile uint8_t *reg = portModeRegister(port);  
+  if (*reg & bit) { return OUTPUT; }
+  else { return INPUT; }
+}
+void parseAnalogInput(int val, byte pos){    
+  analogInput[(2*pos)] = (val & 0xff00) >> 8;
+  analogInput[(2*pos)+1] = val & 0x00ff;  
 }
 
-// function that executes whenever data is received from master
-// this function is registered as an event, see setup()
-void receiveEvent(int howMany) {
-  while (1 < Wire.available()) { // loop through all but the last
-    char c = Wire.read(); // receive byte as a character
-    Serial.print(c);         // print the character
+
+void requestEvent() {
+  serialPrintf("Procesando Código de Mansaje actual=0x%x", CM);
+  //Responderá al masters segun ultimo codigo de mensaje
+  switch (CM) {
+    case CM_CFG:
+      //TODO: Armar mensaje de la CONFIGURACION actual del Arduino
+      Serial.println("Procesar CFG");
+      break;
+    case CM_RDI:
+      //TODO: Armar mensaje de entradas DIGITALES actuales del Arduino
+      Serial.println("Procesar RDI");
+      break;
+    case CM_RAI:
+      //TODO: Armar mensaje de entradas ANALOGICAS actuales del Arduino
+      Serial.println("Processar RAI");
+      break;
+    default:
+      Serial.println("El Código de Manesaje  no requiere respuesta");
+      break;
   }
-  x = Wire.read();    // receive byte as an integer
-  Serial.println(x);         // print the integer
+}
+void receiveEvent(int howMany) {
+  if (Wire.available() > 0) {
+    //Se actualiza CM para saber si es necesario procesar el mensaje para actualizar salidas
+    //o si es solo el codigo de lo que el master le pedirá en el request.
+    CM = Wire.read();
+    serialPrintf("Nuevo Código de Mansaje recibido=0x%x", CM);
+  }
+  
+  switch (CM) {
+    case CM_WDO:
+      //Es necesario parsear el resto del mensaje como valores digitales autoindexados
+      Serial.println("Setear salidas DIGITALES con estados recibidos en mensaje");
+      break;
+    case CM_WAO:
+       //Es necesario parsear el resto del mensaje como valores analogicos indexados
+      Serial.println("Setear salidas ANALOGICAS con valores recibidos en mensaje");
+      break;
+    default:
+      Serial.println("El Código de Manesaje no requiere actualizar salidas");
+      break;
+  }
 }
