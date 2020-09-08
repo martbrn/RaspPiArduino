@@ -32,7 +32,7 @@ void loop() {
   
   if (nextPing) {
     Wire.beginTransmission(I2C_SLAVE); // transmit to device #8
-    Wire.write("M->S=");        // sends five bytes
+    Serial.println("M->S=");        // sends five bytes
     Wire.write(x);              // sends one byte
     Wire.endTransmission();    // stop transmitting
     x++;

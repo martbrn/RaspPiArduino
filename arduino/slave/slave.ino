@@ -26,6 +26,8 @@ void loop() {
 // function that executes whenever data is requested by master
 // this function is registered as an event, see setup()
 void requestEvent() {
+  Serial.print("Enviando: ");
+  Serial.println(x);
   Wire.write("S->M=");
   Wire.write(x);
 }
