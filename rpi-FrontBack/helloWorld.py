@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flask import request, redirect
 import datetime
 from smbus import SMBus
 import sqlite3
@@ -18,13 +19,15 @@ def get_db():
     return db
 
 def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
+    conection = get_db()
+    cur = conection.execute(query, args)
     rv = cur.fetchall()
     cur.close()
+    conection.commit()
     return (rv[0] if rv else None) if one else rv
 
 app = Flask(__name__)
-@app.route("/")
+@app.route("/",methods=['GET', 'POST'])
 def hello():
 
     rows = query_db('SELECT * FROM DISPOSITIVES')
@@ -37,10 +40,14 @@ def hello():
     return render_template('index.html', dispositives=rows)
     
 
-@app.route("/addDispositive")
+@app.route("/addDispositive", methods=['GET', 'POST'])
 def addDispositive():
-
-   
+    if request.method == 'POST':
+        name = request.form['inputnombre']
+        description = request.form['inputdescripcion']
+        model = request.form['inputmodelo']
+        diri2c='0x8'
+        response = query_db('INSERT INTO BOARD (Name,Description,Dir_I2C,Model) VALUES("'+ name + '","' + description +'","' + diri2c + '","' + model +'")')
     return render_template('addDispositive.html')
    
 @app.route("/<deviceName>/<action>")

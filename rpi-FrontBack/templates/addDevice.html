@@ -12,8 +12,8 @@
 </head>
 
    <body>
-	 <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-4">
-  <a class="navbar-brand text-white" href="/">RpiSockets</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-dark mb-4">
+  <a class="navbar-brand text-white" href="#">RpiSockets</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -21,11 +21,11 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link text-white" href="/"> Boards <span class="sr-only">(current)</span></a>
+        <a class="nav-link text-white" href="/"> Dispositives <span class="sr-only">(current)</span></a>
       </li>
             
       <li class="nav-item">
-        <a class="nav-link text-white" href="#">Devices</a>
+        <a class="nav-link text-white" href="#">Sensors</a>
       </li>
       
      <li class="nav-item dropdown">
@@ -33,9 +33,9 @@
           Management
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/addDispositive">Add Boards</a>
+          <a class="dropdown-item" href="/addDispositive" >Add Dispositive</a>
            <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Add Device</a>
+          <a class="dropdown-item" href="#">Add Sensor</a>
         </div>
       </li>
     </ul>
@@ -43,18 +43,14 @@
 </nav>
 
 <div class="container">
-<form action="/addDispositive" method="POST">
+<form>
   <div class="form-group">
     <label for="inputnombre">Nombre</label>
-    <input type="text" class="form-control" name="inputnombre" id="inputnombre" aria-describedby="emailHelp" placeholder="Eg. Arduino1">
+    <input type="text" class="form-control" id="inputnombre" aria-describedby="emailHelp" placeholder="Eg. Device1">
   </div>
   <div class="form-group">
-    <label for="inputdescripcion">Descripcion</label>
-    <input type="text" class="form-control" name="inputdescripcion" id="inputdescripcion" placeholder="Eg. Arduino Led">
-  </div>
-  <div class="form-group">
-    <label for="inputmodelo">Modelo</label>
-    <input type="text" class="form-control" name="inputmodelo" id="inputmodelo" placeholder="Eg. Arduino UNO">
+    <label for="inputdescripcion">Tipo</label>
+    <input type="text" class="form-control" id="inputtipo" placeholder="Eg. 1010">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
