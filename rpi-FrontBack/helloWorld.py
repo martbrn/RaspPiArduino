@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flask import request, redirect
 import datetime
 from smbus import SMBus
 import sqlite3
@@ -24,7 +25,7 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 app = Flask(__name__)
-@app.route("/")
+@app.route("/",methods=['GET', 'POST'])
 def hello():
 
     rows = query_db('SELECT * FROM DISPOSITIVES')
@@ -37,9 +38,13 @@ def hello():
     return render_template('index.html', dispositives=rows)
     
 
-@app.route("/addDispositive")
+@app.route("/addDispositive", methods=['GET', 'POST'])
 def addDispositive():
-
+    if request.method == 'POST':
+        name = request.form['inputnombre']
+        description = request.form['inputdescripcion']
+        model = request.form['inputmodelo']
+        diri2c='0x8'
    
     return render_template('addDispositive.html')
    
