@@ -19,9 +19,11 @@ def get_db():
     return db
 
 def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
+    conection = get_db()
+    cur = conection.execute(query, args)
     rv = cur.fetchall()
     cur.close()
+    conection.commit()
     return (rv[0] if rv else None) if one else rv
 
 app = Flask(__name__)
@@ -45,7 +47,7 @@ def addDispositive():
         description = request.form['inputdescripcion']
         model = request.form['inputmodelo']
         diri2c='0x8'
-   
+        response = query_db('INSERT INTO BOARD (Name,Description,Dir_I2C,Model) VALUES("'+ name + '","' + description +'","' + diri2c + '","' + model +'")')
     return render_template('addDispositive.html')
    
 @app.route("/<deviceName>/<action>")
