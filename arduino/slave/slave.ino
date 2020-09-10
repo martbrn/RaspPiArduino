@@ -40,20 +40,20 @@ void parseAnalogInput(int val, byte pos){
   analogInput[(2*pos)+1] = val & 0x00ff;  
 }
 
-
+//read_i2c_block_data(DIR, #BYTES)
 void requestEvent() {
   serialPrintf("Procesando Código de Mansaje actual=0x%x", CM);
   //Responderá al masters segun ultimo codigo de mensaje
   switch (CM) {
-    case CM_CFG:
+    case CM_CFG://0x10
       //TODO: Armar mensaje de la CONFIGURACION actual del Arduino
       Serial.println("Procesar CFG");
       break;
-    case CM_RDI:
+    case CM_RDI://0x20
       //TODO: Armar mensaje de entradas DIGITALES actuales del Arduino
       Serial.println("Procesar RDI");
       break;
-    case CM_RAI:
+    case CM_RAI://0x22
       //TODO: Armar mensaje de entradas ANALOGICAS actuales del Arduino
       Serial.println("Processar RAI");
       break;
@@ -62,6 +62,7 @@ void requestEvent() {
       break;
   }
 }
+//write_i2c_block_data()
 void receiveEvent(int howMany) {
   if (Wire.available() > 0) {
     //Se actualiza CM para saber si es necesario procesar el mensaje para actualizar salidas
@@ -71,11 +72,11 @@ void receiveEvent(int howMany) {
   }
   
   switch (CM) {
-    case CM_WDO:
+    case CM_WDO://0x21
       //Es necesario parsear el resto del mensaje como valores digitales autoindexados
       Serial.println("Setear salidas DIGITALES con estados recibidos en mensaje");
       break;
-    case CM_WAO:
+    case CM_WAO://0x23
        //Es necesario parsear el resto del mensaje como valores analogicos indexados
       Serial.println("Setear salidas ANALOGICAS con valores recibidos en mensaje");
       break;
