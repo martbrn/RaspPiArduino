@@ -7,7 +7,7 @@ int MOTantihorario=11; //girar en sentido antihorario el motor
 
 int sentido;
 int velocidad;
-
+int velMapeada;
 
 void setup() {
 
@@ -24,7 +24,7 @@ void loop() {
   delay(500);
   sentido = Serial.parseInt();
   velocidad = Serial.parseInt();
-
+//inicia solo si se cargan datos
 if (sentido>0 && velocidad>0) {
   switch (sentido) {
   case 1:
@@ -33,16 +33,19 @@ if (sentido>0 && velocidad>0) {
   case 2:
       girarAntiHorario();
     break;
-  default:
-      girarHorario();
-    break;
 }
+//mapear la velocidad de 1-100 a 0-255
+velMapeada= round((velocidad*255)/100);
+
 
   acelerar(pwm);
   }
-
-Serial.print(velocidad);
-Serial.print(sentido);
+Serial.print(" sentido:");
+Serial.println(sentido);
+Serial.print(" velocidad:");
+Serial.println(velocidad);
+Serial.print(" velMapeada:");
+Serial.println(velMapeada);
 //acelerar();  
 //girarHorario();
 //girarAntiHorario();
@@ -50,7 +53,7 @@ Serial.print(sentido);
 }
 
 void acelerar(int pwm0){
-  for (int pwm = 0; pwm < 256; pwm++){
+  for (int pwm = 0; pwm < velMapeada; pwm++){
      analogWrite(pwm0,pwm); 
      delay(30);
   }

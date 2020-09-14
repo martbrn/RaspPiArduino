@@ -32,6 +32,8 @@ delay(100);
 cont=cont+100;  
 }
 void apretar(){
+  pinMode(Led_rojo, OUTPUT); //led como salida
+   Wire.begin(0x12); 
   lcd.clear();  //limpia la pantalla sino se secuencian los textos
   lcd.print("Tiempo: ");
   lcd.print(cont);
