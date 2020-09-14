@@ -10,12 +10,14 @@ byte CM = 0x0;//Código de Mensaje
 byte analogInput[32];
 
 void setup() {
+  Serial.begin(9600);
+  Serial.println("Iniciando...");
+  
+  
   Wire.begin(DIR_I2C);       
   Wire.onReceive(receiveEvent); 
-  Wire.onRequest(requestEvent);
+  Wire.onRequest(requestEvent); 
   
-  Serial.begin(9600);
-  serialPrintf("Procesando: 0x%x", CM_WAO);             
 }
 
 void loop() {
@@ -42,35 +44,50 @@ void parseAnalogInput(int val, byte pos){
 
 //read_i2c_block_data(DIR, #BYTES)
 void requestEvent() {
-  serialPrintf("Procesando Código de Mansaje actual=0x%x", CM);
+  char* msg = "";  
   //Responderá al masters segun ultimo codigo de mensaje
   switch (CM) {
     case CM_CFG://0x10
       //TODO: Armar mensaje de la CONFIGURACION actual del Arduino
-      Serial.println("Procesar CFG");
+      //Serial.println("Procesar CFG");
+      msg = "1";
       break;
     case CM_RDI://0x20
       //TODO: Armar mensaje de entradas DIGITALES actuales del Arduino
-      Serial.println("Procesar RDI");
+      //Serial.println("Procesar RDI");
+      msg = "2";
       break;
     case CM_RAI://0x22
       //TODO: Armar mensaje de entradas ANALOGICAS actuales del Arduino
-      Serial.println("Processar RAI");
+      //Serial.println("Processar RAI");
+      msg = "3";
       break;
     default:
-      Serial.println("El Código de Manesaje  no requiere respuesta");
+      //Serial.println("El Código de Mansaje  no requiere respuesta");
+      msg = "9";
       break;
   }
+  
+  Wire.write(msg);
+  //serialPrintf("Procesando Código de Mansaje actual=0x%x", CM);
 }
 //write_i2c_block_data()
 void receiveEvent(int howMany) {
-  if (Wire.available() > 0) {
+  //if (Wire.available()>1)
+    //Wire.read();
+    
+  if (Wire.available()) {
     //Se actualiza CM para saber si es necesario procesar el mensaje para actualizar salidas
     //o si es solo el codigo de lo que el master le pedirá en el request.
     CM = Wire.read();
-    serialPrintf("Nuevo Código de Mansaje recibido=0x%x", CM);
+    //serialPrintf("Nuevo Código de Mansaje recibido=0x%x", CM);
   }
-  
+  Serial.println(CM);
+  /*while (Wire.available()) {
+    //Se actualiza CM para saber si es necesario procesar el mensaje para actualizar salidas
+    //o si es solo el codigo de lo que el master le pedirá en el request.
+    //serialPrintf("DATOS=0x%x", Wire.read());
+  }
   switch (CM) {
     case CM_WDO://0x21
       //Es necesario parsear el resto del mensaje como valores digitales autoindexados
@@ -84,4 +101,5 @@ void receiveEvent(int howMany) {
       Serial.println("El Código de Manesaje no requiere actualizar salidas");
       break;
   }
+  */
 }
