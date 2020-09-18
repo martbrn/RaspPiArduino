@@ -1,4 +1,4 @@
-/* */
+/**/
 //sensor
 const int Trigger = 2;   //Pin digital 2 para el Trigger del sensor
 const int Echo = 3;   //Pin digital 3 para el echo del sensor
